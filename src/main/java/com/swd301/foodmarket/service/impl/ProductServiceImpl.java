@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
             product.setImageUrl(imageUrl);
         }
 
-        product.setStatus(ProductStatus.AVAILABLE);
+        product.setStatus(ProductStatus.PENDING);
         product.setShopOwner(getCurrentUser());
 
         Category category = categoryRepository.findById(
@@ -159,5 +159,33 @@ public class ProductServiceImpl implements ProductService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
+
+    @Override
+    public List<ProductResponse> getPendingProducts() {
+        return productRepository.findByStatus(ProductStatus.PENDING)
+                .stream()
+                .map(productMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public ProductResponse approveProduct(Integer id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setStatus(ProductStatus.AVAILABLE);
+        return productMapper.toResponse(productRepository.save(product));
+    }
+
+    @Override
+    public ProductResponse rejectProduct(Integer id, String reason) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.setStatus(ProductStatus.INACTIVE);
+        if (reason != null && !reason.isBlank()) {
+            String existing = product.getDescription() != null ? product.getDescription() : "";
+            product.setDescription("[TỪ CHỐI: " + reason + "] " + existing);
+        }
+        return productMapper.toResponse(productRepository.save(product));
     }
 }

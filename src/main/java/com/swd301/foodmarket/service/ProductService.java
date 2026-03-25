@@ -26,4 +26,10 @@ public interface ProductService {
      List<ProductResponse> getByShopId(Integer shopId);
 
     PageResponse<ProductResponse> getByShopIdPaged(Integer shopId, int page, int size);
+
+    List<ProductResponse> getPendingProducts();
+
+    ProductResponse approveProduct(Integer id);
+
+    ProductResponse rejectProduct(Integer id, String reason);
 }

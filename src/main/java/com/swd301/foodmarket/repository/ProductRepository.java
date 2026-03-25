@@ -18,5 +18,6 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     List<Product> findByExpiryDateBeforeAndStatusNot(LocalDate date, ProductStatus status);
     List<Product> findByProductNameContainingIgnoreCaseAndStatus(String keyword, ProductStatus status);
     List<Product> findByStatusOrderByCategoryAsc(ProductStatus status);
+    List<Product> findByStatus(ProductStatus status);
 }
 

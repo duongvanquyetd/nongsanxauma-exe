@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -113,6 +114,33 @@ public class ProductController {
     public ApiResponse<List<ProductResponse>> getByShopId(@PathVariable Integer shopId) {
         return ApiResponse.<List<ProductResponse>>builder()
                 .result(productService.getByShopId(shopId))
+                .build();
+    }
+
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<ProductResponse>> getPendingProducts() {
+        return ApiResponse.<List<ProductResponse>>builder()
+                .result(productService.getPendingProducts())
+                .build();
+    }
+
+    @PatchMapping("/{id}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ProductResponse> approveProduct(@PathVariable Integer id) {
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.approveProduct(id))
+                .build();
+    }
+
+    @PatchMapping("/{id}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ProductResponse> rejectProduct(
+            @PathVariable Integer id,
+            @RequestParam(required = false) String reason
+    ) {
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.rejectProduct(id, reason))
                 .build();
     }
 }
