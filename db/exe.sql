@@ -4,9 +4,10 @@
 -- Chạy lại bất kỳ lúc nào trên DB đã có schema
 -- Password: Admin@123 (bcrypt)
 -- ============================================================
-
+ALTER TABLE products 
+MODIFY COLUMN status ENUM('PENDING', 'AVAILABLE', 'OUT_OF_STOCK', 'EXPIRED', 'INACTIVE');
 SET FOREIGN_KEY_CHECKS = 0;
-
+d
 TRUNCATE TABLE user_notifications;
 TRUNCATE TABLE notifications;
 TRUNCATE TABLE reviews;
